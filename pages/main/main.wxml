@@ -2,6 +2,7 @@
   <view class='page-content'>
     <view class="tab-content  {{onContent == 100? 'on': ''}}">
       <block>
+        <!--包含-->
         <include src="../home/home.wxml" />
       </block>
     </view>

@@ -7,14 +7,15 @@ const baseSubjects = data => request('get', '/common/courseList.do', data)
 
 // 用户数据
 const userLogin = data => request('post', '/member/login.do', data)
-const userCenter = data => request('get', '/user/center', data)
+const userCenter = data => request('post', '/member/center.do', data)
 
 // 面试题数据
-const questionsConfirm = data => request('post', `/questions/confirm`, data)
+const questionsConfirm = data => request('post', `/member/setCityCourse.do`, data)
 const questionsFavorite = data => request('post', `/questions/favorite/${data.id}`, data)
-const questionsCategorys = data => request('get', `/questions/categorys/${data.categoryKind}/${data.categoryType}`, data)
-const questionsList = data => request('get', `/questions/${data.categoryID}/${data.categoryKind}/${data.categoryType}`, data)
-const questionsCommmitOne = data => request('post', `/questions/${data.id}/${data.categoryID}/${data.categoryKind}/${data.categoryType}`, data)
+//获取题目分类列表
+const questionsCategorys = data => request('post', `/category/list.do`, data)
+const questionsList = data => request('post', `/question/list.do`, data)
+const questionsCommmitOne = data => request('post', `/question/submit.do`, data)
 const questionsCommmitBatch = data => request('post', `/questions/category/${data.categoryID}/${data.categoryKind}/${data.categoryType}`, data)
 const questionsEmpty = data => request('post', `/questions/empty/${data.categoryID}/${data.categoryKind}/${data.categoryType}`, data)
 

@@ -52,14 +52,17 @@ Page({
    *    页面加载完成之后就不会在执行
    */
   onLoad: function (option) {
+    //获取携带过来的id、kind、type
     categoryID = option.id
     categoryKind = option.kind
     categoryType = option.type
+    //封装请求参数： categoryKind、categoryType、categoryTitle
     this.setData({
       categoryTitle: option.title,
       categoryKind: option.kind,
       categoryType: option.type
     })
+    //获取题目列表
     this.getList()
     // 滚动区域
     let _this = this
@@ -94,17 +97,22 @@ Page({
    */
   // 拉取题目列表
   getList() {
+    //显示"加载中",为了一个更好的用户体验
     wx.showLoading({
       title: '加载中'
     })
+    //调用api.js中的questionsList发送请求
     Api.questionsList({
       categoryID,
       categoryKind,
       categoryType
     })
       .then(res => {
+        //处理响应结果
         console.log('数据下载完成')
+        //调用processData方法处理响应结果
         this.processData(res.data)
+        //隐藏"加载中"
         wx.hideLoading()
       })
       .catch(err => {
@@ -114,12 +122,15 @@ Page({
   },
   // 处理数据
   processData(data) {
+    //设置数据
     this.setData({
-      questions: data,
+      questions: data.result,
       hiddenBG: true
     })
-    if (data.items.length > 0) {
-      let lastID = data.lastID
+
+    if (data.result.items.length > 0) {
+      //这个lastID表示最后一道题的id(这句代码是多余的)
+      let lastID = data.result.lastID
       // 跳转没有做的第一题，如果都做了返回最后做的题目
       let currPosition = this.data.questions.items.findIndex((element, index) => {
         return !element.isFinished
@@ -155,6 +166,7 @@ Page({
   // 提交单题
   commentOne() {
     let currQuestion = this.data.questions.items[this.data.currPosition]
+    //调用api.js中的方法
     Api.questionsCommmitOne({
       categoryID,
       categoryKind,

@@ -174,11 +174,14 @@ Page({
     } else {
       //先获取用户信息
       app.getUserInfo(e.detail, function() {
+        //调用了api.js中的questionsConfirm()方法,并且传入参数data
+        //data里面包含cityId以及subjectId
         app.api
           .questionsConfirm(data)
           .then(res => {
             // wx.setStorageSync('categoryType', data) // 写缓存 // FIXME: 取消本地缓存
             // console.log(res)
+            //跳转到/pages/main/main
             wx.redirectTo({
               url:
                 '/pages/main/main?cityID=' +

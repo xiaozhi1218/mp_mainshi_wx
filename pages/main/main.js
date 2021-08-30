@@ -10,7 +10,7 @@ Page({
   data: {
     pagetype: '已做',
     questionList: [], //  问题列表
-    currentTypeId: 100, // 当前类型：首页
+    currentTypeId: 101, // 当前类型：首页
     currentKindId: 1, // 默认种类： TAG
     currentTab: 0, // 点击切换索引
     userInfo: {}, //  用户信息
@@ -44,17 +44,23 @@ Page({
       }
     })
   },
+  // 当main页面展示的时候执行的函数
   onShow: function (e) {
     let _this = this
+    //封装请求参数
     let backdata = {
+      //categoryType的值为101表示刷题、201表示错题本、202表示20的练习、203表示收藏题库
       categoryType: _this.data.currentTypeId,
+      //categoryType的值为1表示按学科目录、2表示按企业
       categoryKind: _this.data.categoryKind
     }
+    //
     app.api
       .questionsCategorys(backdata)
       .then(res => {
+        //处理响应数据
         _this.setData({
-          questionList: res.data.items
+          questionList: res.data.result
         })
       })
       .catch(res => {
@@ -96,6 +102,7 @@ Page({
   },
   // 切换：题库列表
   loadSwitchData: function (e) {
+    //改变categoryKind的值
     this.setData({
       categoryKind: e.detail.val
     })
@@ -104,11 +111,12 @@ Page({
       categoryType: 101,
       categoryKind: this.data.categoryKind
     }
+    //发送请求获取题目分类列表
     app.api
       .questionsCategorys(data)
       .then(res => {
         _this.setData({
-          questionList: res.data.items
+          questionList: res.data.result
         })
       })
       .catch(res => {
@@ -126,10 +134,10 @@ Page({
     app.api
       .userCenter()
       .then(res => {
-        lastAnswer = res.data.lastAnswer
-        category = res.data.category
+        lastAnswer = res.data.result.lastAnswer
+        category = res.data.result.category
         _this.setData({
-          answerCounts: res.data.answerCount
+          answerCounts: res.data.result.answerCount
         })
       })
       .catch(res => {
@@ -153,12 +161,15 @@ Page({
 
   // 路由：去做题
   handleExam: function (e) {
+    //1. 获取当前点击的条目的id
     let id = e.detail.id
+    //2. 获取当前点击的条目的名字
     let title = e.detail.title
-
+    //3. 获取当前的categoryType  101
     let type = this.data.currentTypeId
+    //4. 获取当前的categoryKind 1 或者 2
     let kind = this.data.categoryKind
-
+    //5. 跳转到/exam/exam并且将当前条目的id、title、type、kind都携带过去
     wx.navigateTo({
       url: `../exam/exam?id=${id}&title=${title}&type=${type}&kind=${kind}`
     })
@@ -196,7 +207,7 @@ Page({
   // 路由： 继续答题
   handleGoExam() {
     wx.navigateTo({
-      url: `../exam/exam?id=${lastAnswer.categoryId}&kind=${lastAnswer.categoryKind}&type=${lastAnswer.categoryType}&title=${lastAnswer.categoryTitle}`
+      url: `../exam/exam?id=${lastAnswer.categoryID}&kind=${lastAnswer.categoryKind}&type=${lastAnswer.categoryType}&title=${lastAnswer.categoryTitle}`
     })
   },
   // 切换题库
@@ -208,10 +219,12 @@ Page({
 
   // 切换：底部页面切换
   changPage: function (e) {
+    //1. 设置dataType的值
     let dataType = e.currentTarget.dataset.type
     this.setData({
       onContent: dataType
     })
+    //判断如果dataType是103则加载个人中心
     if (dataType === "103") {
       this.loadUserCenter()
     }
